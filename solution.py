@@ -16,7 +16,7 @@ import numpy as np
 import pandas as pd
 from imblearn.under_sampling import RandomUnderSampler
 from sklearn.ensemble import GradientBoostingClassifier
-from sklearn.metrics import log_loss, make_scorer
+from sklearn.metrics import log_loss, accuracy_score, make_scorer
 import category_encoders as ce
 from skopt import BayesSearchCV
 import sys
@@ -45,6 +45,7 @@ def predict_future_activation(current_time, previous_readings):
     us = RandomUnderSampler(sampling_strategy=1, random_state=42)
     be = ce.BinaryEncoder()
 
+    lls = make_scorer(log_loss, greater_is_better=False)
     gbc = GradientBoostingClassifier()
     # Parameter Space for Gradient Boosting Algorithm
     params_gb = {
@@ -55,7 +56,7 @@ def predict_future_activation(current_time, previous_readings):
         "min_samples_leaf": list(range(1, 21))
     }
 
-    lls = make_scorer(log_loss)
+
 
     bcv = BayesSearchCV(gbc,
                         params_gb,
